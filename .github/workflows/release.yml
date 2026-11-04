@@ -1,0 +1,27 @@
+name: release
+
+# Push a tag like v0.3.0 to publish a GitHub release. The tag must match the version in
+# _extensions/webmcp/_extension.yml and webmcp.lua, so `quarto add ...@vX.Y.Z` installs what it says.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Check versions match the tag
+        run: |
+          v="${GITHUB_REF_NAME#v}"
+          grep -qx "version: $v" _extensions/webmcp/_extension.yml || { echo "_extension.yml version is not $v"; exit 1; }
+          grep -q "local VERSION = \"$v\"" _extensions/webmcp/webmcp.lua || { echo "webmcp.lua VERSION is not $v"; exit 1; }
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" --verify-tag --generate-notes \
+            --notes "Install: \`quarto add ${GITHUB_REPOSITORY}@${GITHUB_REF_NAME}\`"

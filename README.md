@@ -215,6 +215,14 @@ quarto preview
 quarto render && npm install && npm test
 ```
 
+## Releasing
+
+1. Set the new version in `_extensions/webmcp/_extension.yml` and `VERSION` in `webmcp.lua`.
+2. Commit, then tag and push: `git tag v0.3.0 && git push origin v0.3.0`.
+
+The `release` workflow checks that the versions match the tag and publishes the GitHub release.
+Sites pin a release with `quarto add alexanderwiebe/quarto-webmcp@v0.3.0`.
+
 ## License
 
 MIT
