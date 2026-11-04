@@ -12,7 +12,7 @@
 -- Malformed `agent:` data fails the render instead of publishing tools that mislead agents.
 -- Settings and the `agent:` schema are documented in README.md.
 
-local VERSION = "0.1.0"
+local VERSION = "0.2.0"
 
 local EVIDENCE_TYPES = { measured = true, experienced = true, cited = true, opinion = true }
 local SOURCE_RELATIONS = { supports = true, contradicts = true, ["builds-on"] = true, background = true }
@@ -123,6 +123,7 @@ local function site_settings(meta, cfg)
     links = is_map(cfg.links) and cfg.links or nil,
     posts = cfg.posts or "posts",
     theme = is_map(cfg.theme) and cfg.theme or nil,
+    content = is_map(cfg.content) and cfg.content or nil,
     index = cfg.index ~= false,
     version = VERSION,
   }

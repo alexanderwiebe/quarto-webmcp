@@ -23,6 +23,8 @@ Extracted from [systemsbyaj.com](https://systemsbyaj.com)
 quarto add alexanderwiebe/quarto-webmcp
 ```
 
+Pin a release with `quarto add alexanderwiebe/quarto-webmcp@v0.2.0`.
+
 Then add the filter and the post-render script to `_quarto.yml`:
 
 ```yaml
@@ -55,6 +57,10 @@ webmcp:
   theme:                            # add a set_theme tool that clicks your own theme controls
     light: "[data-theme-btn=light]"
     dark: "[data-theme-btn=dark]"
+  content:                          # for custom layouts: where content is, how it splits into sections
+    root: ".wrap"                   # default: "#quarto-document-content, main"
+    heading: ".section-label, h2"   # default: "h2"
+    skip: ".masthead, .crumb"       # elements left out of get_current_page and get_page
   origin-trials:                    # WebMCP origin-trial tokens, added to every page's <head>
     - "AgKG...="
   index: true                       # false: site tools only look at the current page
@@ -160,6 +166,19 @@ document.addEventListener('webmcp:ready', function (e) {
 ```
 
 Include it with `include-after-body`. `execute` can return an object (it is turned into JSON) or a string.
+
+`window.siteTools` also has helpers for writing tools:
+
+| Helper | Does |
+|---|---|
+| `index()` | Promise of the parsed `webmcp-index.json` (each page has `url`, `path`, `title`, `kind`, `agent`...), or `null` |
+| `loadPage(url)` | Promise of a fetched page as a `Document` (cached; the current page returns `document`) |
+| `pageContent(doc, url)` | `{title, url, description, published, sections}` for a page |
+| `sections(doc)` | The page split at each heading: `[{heading, items: [text...]}]` |
+| `text(el)` | An element's visible text, whitespace collapsed |
+| `findPage(pages, query)` | Best match by exact title, slug or path, then partial match |
+| `absUrl(path)` | A site-root-relative path as an absolute URL |
+| `json(value)` | Pretty-printed JSON string |
 
 ## Checking it
 

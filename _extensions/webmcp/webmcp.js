@@ -262,26 +262,37 @@ function quartoWebmcpInit() {
     return pageCache[key];
   }
 
+  // Where page content lives and how it splits into sections. Sites with their own layout set
+  // `webmcp.content` (root, heading and skip selectors) in _quarto.yml.
+  var content = Object.assign({
+    root: '#quarto-document-content, main',
+    heading: 'h2',
+    skip: '#title-block-header, header, nav, script, style, svg, .quarto-listing, #quarto-margin-sidebar'
+  }, site.content || {});
+
   function contentRoot(doc) {
-    return doc.querySelector('#quarto-document-content') || doc.querySelector('main') || doc.body;
+    return doc.querySelector(content.root) || doc.querySelector('main') || doc.body;
   }
 
-  // Children of el, with the <section> wrappers Quarto puts around headings flattened.
+  // Children of el, flattening the <section> wrappers Quarto puts around headings and any other
+  // wrapper that contains a heading.
   function flatChildren(el) {
     return Array.prototype.reduce.call(el.children, function (all, child) {
-      return all.concat(child.matches('section') ? flatChildren(child) : [child]);
+      var wrapper = child.matches('section') || (!child.matches(content.heading) && !child.matches(content.skip) &&
+        child.querySelector(content.heading));
+      return all.concat(wrapper ? flatChildren(child) : [child]);
     }, []);
   }
 
-  // The page's content split into sections at each h2.
+  // The page's content split into sections at each heading.
   function sections(doc) {
     var main = contentRoot(doc);
     var out = [];
     var current = { heading: null, items: [] };
     if (!main) return out;
     flatChildren(main).forEach(function (el) {
-      if (el.matches('#title-block-header, header, nav, script, style, svg, .quarto-listing, #quarto-margin-sidebar')) return;
-      if (el.matches('h2')) {
+      if (el.matches(content.skip)) return;
+      if (el.matches(content.heading)) {
         if (current.heading || current.items.length) out.push(current);
         current = { heading: text(el), items: [] };
         return;
@@ -661,6 +672,12 @@ function quartoWebmcpInit() {
     absUrl: absUrl,
     data: data,
     index: loadIndex,
+    // Helpers for site-specific tools.
+    loadPage: loadPage,
+    text: text,
+    sections: sections,
+    pageContent: pageContent,
+    findPage: findPage,
     list: function () {
       return wrapped.map(function (t) {
         return { name: t.name, description: t.description, inputSchema: t.inputSchema, annotations: t.annotations };
