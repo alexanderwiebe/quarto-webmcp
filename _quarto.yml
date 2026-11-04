@@ -1,0 +1,38 @@
+# Example site for the quarto-webmcp extension. Also what CI renders and checks.
+project:
+  type: website
+  output-dir: _site
+  render:
+    - index.qmd
+    - about.qmd
+    - posts/**/*.qmd
+  post-render: _extensions/webmcp/webmcp-index.ts
+
+website:
+  title: "quarto-webmcp example"
+  description: "A Quarto website whose content is exposed to in-browser AI agents through WebMCP."
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: posts/index.qmd
+        text: Posts
+      - href: about.qmd
+        text: About
+
+format:
+  html:
+    theme:
+      light: cosmo
+      dark: darkly
+
+filters:
+  - webmcp
+
+webmcp:
+  owner: "AJ Wiebe"
+  about: about.html
+  posts: posts
+  source: "https://github.com/alexanderwiebe/quarto-webmcp"
+  links:
+    github: "https://github.com/alexanderwiebe"

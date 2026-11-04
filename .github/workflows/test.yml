@@ -1,0 +1,40 @@
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        quarto: [release, pre-release]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          version: ${{ matrix.quarto }}
+      - run: npm ci
+      - run: quarto --version
+      - name: Render the example site
+        run: quarto render
+      - name: Check webmcp output
+        run: node tests/check-site.mjs _site
+      - name: Call every tool against the rendered pages
+        run: node tests/tools.test.mjs _site
+      - name: Indexer also runs under Node
+        run: |
+          rm _site/webmcp-index.json _site/llms.txt
+          node _extensions/webmcp/webmcp-index.ts _site
+          node tests/check-site.mjs _site
+      - uses: actions/upload-artifact@v7
+        if: matrix.quarto == 'release'
+        with:
+          name: site
+          path: _site

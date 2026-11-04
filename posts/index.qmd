@@ -1,0 +1,8 @@
+---
+title: "Posts"
+description: "Posts with agent-readable frontmatter."
+listing:
+  contents: "*/index.qmd"
+  sort: "date desc"
+  type: default
+---

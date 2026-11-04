@@ -1,0 +1,11 @@
+{
+  "name": "quarto-webmcp-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node tests/check-site.mjs _site && node tests/tools.test.mjs _site"
+  },
+  "devDependencies": {
+    "linkedom": "0.18.14"
+  }
+}

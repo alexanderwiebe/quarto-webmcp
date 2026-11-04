@@ -1,0 +1,18 @@
+---
+title: "quarto-webmcp example"
+description: "Every page on this site registers WebMCP tools that answer questions about the site and its posts."
+---
+
+This site is built with the [quarto-webmcp](https://github.com/alexanderwiebe/quarto-webmcp) extension.
+Open it in a browser with WebMCP and an agent can ask the page for its content instead of reading the screen.
+
+## Try it
+
+In any browser, open the developer console and run:
+
+```js
+window.siteTools.list().map(t => t.name)
+JSON.parse(await window.siteTools.call('about_this_website', {}))
+```
+
+`<html data-webmcp>` shows whether the tools were registered with WebMCP.

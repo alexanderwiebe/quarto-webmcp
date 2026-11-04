@@ -1,0 +1,13 @@
+---
+title: "About"
+description: "Who made this example and why."
+---
+
+## Who
+
+This example is maintained by AJ Wiebe as part of the quarto-webmcp extension.
+
+## Why
+
+Agents increasingly read websites for people. WebMCP lets a site answer them with structured data,
+and Quarto already has everything needed to build that data from the same files people read.

@@ -1,0 +1,48 @@
+---
+title: "Blog posts that answer agents back"
+description: "The post is for people. Its WebMCP tools are for the agents reading it on their behalf."
+author: "AJ Wiebe"
+date: 2026-11-04
+
+agent:
+  summary: "A blog post can serve human readers and AI agents at once: prose for people, and WebMCP tools built from the same file that answer the questions readers ask of any post."
+  takeaways:
+    - "Readers ask the same questions of every post: what, for whom, by whom, what claim, what evidence, how current, what bias, what context, what next."
+    - "Scholarly articles answer those questions in fixed sections. Blogs mostly don't, so agents guess from the prose."
+    - "Typing each claim's evidence (measured, experienced, cited, opinion) is the most useful single addition."
+  audience:
+    for: ["People who publish technical blogs with Quarto", "Developers building sites for AI agents"]
+    not_for: ["Sites that need agents to find content without a browser; use llms.txt and JSON-LD for that"]
+    prerequisites: ["A Quarto website", "Basic JavaScript"]
+  author_experience: "Built the WebMCP layer for systemsbyaj.com, which this extension was extracted from."
+  tested_against: { webmcp: "Chrome early preview, 2026", quarto: "1.x" }
+  disclosures: []
+  claims:
+    - id: c1
+      claim: "Agents answer questions about a post more reliably from structured tools than from scraped prose."
+      evidence: { type: opinion, detail: "Not yet measured; based on building these tools." }
+    - id: c2
+      claim: "Generating the tools from the post's own frontmatter keeps the human and agent versions in sync."
+      evidence: { type: experienced, detail: "How every post on this site is built.", link: "#how-it-works" }
+  sources:
+    - { title: "WebMCP imperative API (Chrome for Developers)", url: "https://developer.chrome.com/docs/ai/webmcp/imperative-api", relation: builds-on }
+  limitations:
+    - "WebMCP only works while the page is open in a browser that supports it, so crawlers and API-only agents don't see the tools."
+    - "Everything the tools return is written by the author. They make honesty structured, not verified."
+  next_steps:
+    - { action: "Add the extension to your Quarto site", link: "https://github.com/alexanderwiebe/quarto-webmcp#install" }
+---
+
+Most blog posts are written to be read top to bottom by a person. More and more, they're read by an agent on that person's behalf, and the agent has to guess what the post claims and how sure the author is.
+
+## The questions every post gets asked
+
+Is this for me? Who wrote it? How do they know? Is it current? Is it selling something? What do I do next? Scholarly articles answer these in required sections. Blogs mostly leave them implicit.
+
+## How it works
+
+Each post's frontmatter has an `agent:` block. The build turns it into WebMCP tools on the post's page, one per question, while the reader sees only the post.
+
+## What this doesn't do
+
+It doesn't verify anything. It gives an honest author a structured way to say what they know, how they know it, and where it stops applying.
