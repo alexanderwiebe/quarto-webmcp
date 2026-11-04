@@ -61,6 +61,7 @@ const tick = () => new Promise((r) => setTimeout(r, 0));
   assert.equal(navigator.modelContext, d.modelContext, "navigator alias");
 
   const about = await call(w, "about_this_website", {});
+  assert.equal(about.site, "quarto-webmcp example", "site name from the index");
   assert.equal(about.owner, "AJ Wiebe");
   assert.equal(about.about, ORIGIN + "/about.html");
   assert.ok(about.pages.some((p) => p.title === "About"), "about lists pages");

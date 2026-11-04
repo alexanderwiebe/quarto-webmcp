@@ -357,11 +357,12 @@ function quartoWebmcpInit() {
       annotations: { readOnlyHint: true },
       execute: function () {
         return loadIndex().then(function (index) {
+          var indexed = (index && index.site) || {};
           return {
-            site: siteName,
+            site: site.name || indexed.name || siteName,
             url: site.url || rootUrl,
             owner: site.owner || null,
-            purpose: site.description || null,
+            purpose: site.description || indexed.description || null,
             about: site.about ? absUrl(site.about) : null,
             pages: index ? index.pages.filter(function (p) { return p.kind !== 'post'; }).map(summary) : null,
             latestPosts: index ? posts(index).slice(0, 5).map(summary) : null,

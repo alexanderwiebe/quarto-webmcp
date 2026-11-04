@@ -104,6 +104,18 @@ if (!site) {
   process.exit(0);
 }
 
+// Lua filters can't read the `website:` settings, so fill the site name and description from the
+// rendered home page: its og:site_name or navbar title, and its description.
+if (!site.name || !site.description) {
+  const homeFile = path.join(outDir, "index.html");
+  const home = fs.existsSync(homeFile) ? fs.readFileSync(homeFile, "utf8") : "";
+  const ogName = home.match(/<meta property="og:site_name" content="([^"]*)"/);
+  const navTitle = home.match(/<span class="navbar-title">([\s\S]*?)<\/span>/);
+  site.name = site.name || (ogName && decode(ogName[1])) || (navTitle && decode(navTitle[1].replace(/<[^>]+>/g, "")).trim()) || null;
+  const homePage = pages.find((p) => p.path === "./");
+  site.description = site.description || (homePage && homePage.description) || null;
+}
+
 const index = { generator: `quarto-webmcp ${site.version || ""}`.trim(), generated: new Date().toISOString(), site, pages };
 fs.writeFileSync(path.join(outDir, "webmcp-index.json"), JSON.stringify(index));
 
