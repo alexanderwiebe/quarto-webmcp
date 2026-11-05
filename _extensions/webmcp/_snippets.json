@@ -1,0 +1,71 @@
+{
+  "Agent block": {
+    "prefix": "agent",
+    "description": "Front matter for an agent-readable post: summary, audience, a claim with evidence, a source and a next step. Every field is optional.",
+    "body": [
+      "extensions:",
+      "  webmcp:",
+      "    agent:",
+      "      summary: \"${1:The post's thesis in one sentence.}\"",
+      "      takeaways:",
+      "        - \"${2:What a reader should remember.}\"",
+      "      audience:",
+      "        for: [\"${3:Who the post is for}\"]",
+      "        not_for: [\"${4:Who it does not apply to}\"]",
+      "        prerequisites: [\"${5:What the reader needs to know}\"]",
+      "      author_experience: \"${6:What you have done hands-on that this post draws on.}\"",
+      "      disclosures: []",
+      "      claims:",
+      "        - id: c1",
+      "          claim: \"${7:A claim the post makes.}\"",
+      "          evidence: { type: ${8|measured,experienced,cited,opinion|}, detail: \"${9:How you know.}\" }",
+      "      sources:",
+      "        - { title: \"${10:Source title}\", url: \"${11:https://}\", relation: ${12|builds-on,supports,contradicts,background|} }",
+      "      limitations:",
+      "        - \"${13:Where the advice stops applying.}\"",
+      "      next_steps:",
+      "        - { action: \"${14:What the reader should do next}\", link: \"${15:#heading}\" }",
+      "$0"
+    ]
+  },
+  "Agent claim": {
+    "prefix": "agent-claim",
+    "description": "One claim with its evidence, for agent.claims.",
+    "body": [
+      "- id: ${1:c2}",
+      "  claim: \"${2:A claim the post makes.}\"",
+      "  evidence: { type: ${3|measured,experienced,cited,opinion|}, detail: \"${4:How you know.}\", link: \"${5:#heading}\" }$0"
+    ]
+  },
+  "Agent source": {
+    "prefix": "agent-source",
+    "description": "One source the post relies on or responds to, for agent.sources.",
+    "body": [
+      "- { title: \"${1:Source title}\", url: \"${2:https://}\", relation: ${3|builds-on,supports,contradicts,background|} }$0"
+    ]
+  },
+  "Site settings": {
+    "prefix": "settings",
+    "description": "Site-wide settings for _quarto.yml. Every field is optional.",
+    "body": [
+      "extensions:",
+      "  webmcp:",
+      "    owner: \"${1:Your name}\"",
+      "    about: ${2:about.html}",
+      "    posts: ${3:posts}",
+      "    links:",
+      "      github: \"${4:https://github.com/you}\"",
+      "$0"
+    ]
+  },
+  "Disable on this page": {
+    "prefix": "disable",
+    "description": "Front matter that turns the WebMCP tools off on one page.",
+    "body": [
+      "extensions:",
+      "  webmcp:",
+      "    enabled: false",
+      "$0"
+    ]
+  }
+}

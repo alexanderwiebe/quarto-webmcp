@@ -29,10 +29,11 @@ format:
 filters:
   - webmcp
 
-webmcp:
-  owner: "AJ Wiebe"
-  about: about.html
-  posts: posts
-  source: "https://github.com/alexanderwiebe/quarto-webmcp"
-  links:
-    github: "https://github.com/alexanderwiebe"
+extensions:
+  webmcp:
+    owner: "AJ Wiebe"
+    about: about.html
+    posts: posts
+    source: "https://github.com/alexanderwiebe/quarto-webmcp"
+    links:
+      github: "https://github.com/alexanderwiebe"

@@ -7,42 +7,43 @@ format: html
 filters:
   - webmcp
 
-# Site-wide settings. In a website project these go in _quarto.yml; all are optional.
-webmcp:
-  name: "quarto-webmcp example"
-  owner: "AJ Wiebe"
-  source: "https://github.com/alexanderwiebe/quarto-webmcp"
-
-# Optional. A page with an `agent:` block is treated as a post and gets the post tools
-# (get_post_summary, check_post_fit, get_post_credibility, get_post_claims, get_post_context,
-# get_post_next_steps). Rendering fails with a clear message if the block is malformed.
-agent:
-  summary: "The quarto-webmcp extension registers WebMCP tools on every page of a Quarto site, so an agent in the reader's browser can ask the page for its content instead of reading the screen."
-  takeaways:
-    - "Add `webmcp` to `filters:` and every HTML page gets site tools."
-    - "Add an `agent:` block to a post and it also gets tools for its summary, audience, claims, evidence and sources."
-    - "Websites also get a search index and an llms.txt, written by a post-render script."
-  audience:
-    for: ["People who publish with Quarto", "Developers building sites for AI agents"]
-    not_for: ["Agents that never open the page in a browser; use llms.txt for those"]
-    prerequisites: ["Quarto 1.4 or later"]
-  author_experience: "Built for systemsbyaj.com and extracted into this extension."
-  tested_against: { quarto: "1.x" }
-  disclosures: []
-  claims:
-    - id: c1
-      claim: "The tools come from the same file as the page, so they can't drift out of sync with it."
-      evidence: { type: experienced, detail: "Every tool reads this document's metadata or rendered content.", link: "#how-it-works" }
-    - id: c2
-      claim: "Agents answer questions about a page more reliably from structured tools than from scraped text."
-      evidence: { type: opinion, detail: "Not yet measured." }
-  sources:
-    - { title: "WebMCP imperative API (Chrome for Developers)", url: "https://developer.chrome.com/docs/ai/webmcp/imperative-api", relation: builds-on }
-  limitations:
-    - "WebMCP only works while the page is open in a browser that supports it."
-    - "Everything the tools return is written by the author. The extension structures it; it doesn't verify it."
-  next_steps:
-    - { action: "Install the extension", link: "https://github.com/alexanderwiebe/quarto-webmcp#install" }
+# Settings live under `extensions: webmcp:`, where Quarto Wizard completes and checks them.
+# Site-wide settings (name, owner, source...) go in _quarto.yml in a website; all are optional.
+# A page with an `agent:` block is treated as a post and gets the post tools (get_post_summary,
+# check_post_fit, get_post_credibility, get_post_claims, get_post_context, get_post_next_steps).
+# Rendering fails with a clear message if the block is malformed.
+extensions:
+  webmcp:
+    name: "quarto-webmcp example"
+    owner: "AJ Wiebe"
+    source: "https://github.com/alexanderwiebe/quarto-webmcp"
+    agent:
+      summary: "The quarto-webmcp extension registers WebMCP tools on every page of a Quarto site, so an agent in the reader's browser can ask the page for its content instead of reading the screen."
+      takeaways:
+        - "Add `webmcp` to `filters:` and every HTML page gets site tools."
+        - "Add an `agent:` block to a post and it also gets tools for its summary, audience, claims, evidence and sources."
+        - "Websites also get a search index and an llms.txt, written by a post-render script."
+      audience:
+        for: ["People who publish with Quarto", "Developers building sites for AI agents"]
+        not_for: ["Agents that never open the page in a browser; use llms.txt for those"]
+        prerequisites: ["Quarto 1.4 or later"]
+      author_experience: "Built for systemsbyaj.com and extracted into this extension."
+      tested_against: { quarto: "1.x" }
+      disclosures: []
+      claims:
+        - id: c1
+          claim: "The tools come from the same file as the page, so they can't drift out of sync with it."
+          evidence: { type: experienced, detail: "Every tool reads this document's metadata or rendered content.", link: "#how-it-works" }
+        - id: c2
+          claim: "Agents answer questions about a page more reliably from structured tools than from scraped text."
+          evidence: { type: opinion, detail: "Not yet measured." }
+      sources:
+        - { title: "WebMCP imperative API (Chrome for Developers)", url: "https://developer.chrome.com/docs/ai/webmcp/imperative-api", relation: builds-on }
+      limitations:
+        - "WebMCP only works while the page is open in a browser that supports it."
+        - "Everything the tools return is written by the author. The extension structures it; it doesn't verify it."
+      next_steps:
+        - { action: "Install the extension", link: "https://github.com/alexanderwiebe/quarto-webmcp#install" }
 ---
 
 This page was rendered with the [quarto-webmcp](https://github.com/alexanderwiebe/quarto-webmcp) extension.

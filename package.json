@@ -3,9 +3,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node tests/check-site.mjs _site && node tests/tools.test.mjs _site"
+    "test": "node tests/check-site.mjs _site && node tests/tools.test.mjs _site && node tests/wizard.test.mjs"
   },
   "devDependencies": {
-    "linkedom": "0.18.14"
+    "ajv": "8.20.0",
+    "linkedom": "0.18.14",
+    "yaml": "2.9.1"
   }
 }

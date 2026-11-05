@@ -38,9 +38,12 @@ jobs:
           dir="$RUNNER_TEMP/example"
           mkdir -p "$dir/_extensions/alexanderwiebe"
           cp -R _extensions/webmcp "$dir/_extensions/alexanderwiebe/"
-          cp example.qmd "$dir/"
-          (cd "$dir" && quarto render example.qmd)
+          cp example.qmd tests/legacy.qmd "$dir/"
+          (cd "$dir" && quarto render example.qmd && quarto render legacy.qmd)
           node tests/example.test.mjs "$dir/example.html"
+          node tests/legacy.test.mjs "$dir/legacy.html"
+      - name: Check the Quarto Wizard schema and snippets
+        run: node tests/wizard.test.mjs
       - uses: actions/upload-artifact@v7
         if: matrix.quarto == 'release'
         with:

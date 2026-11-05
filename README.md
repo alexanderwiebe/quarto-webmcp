@@ -23,7 +23,7 @@ Extracted from [systemsbyaj.com](https://systemsbyaj.com)
 quarto add alexanderwiebe/quarto-webmcp
 ```
 
-Pin a release with `quarto add alexanderwiebe/quarto-webmcp@v0.2.0`.
+Pin a release with `quarto add alexanderwiebe/quarto-webmcp@v0.3.0`.
 
 To try it on a single document first, copy [`example.qmd`](example.qmd) next to the installed
 `_extensions/` folder and run `quarto render example.qmd`. It has a full `agent:` block and shows how to
@@ -46,35 +46,61 @@ The filter is enough for the tools to register. The post-render script writes `w
 
 ## Settings
 
-All optional, under `webmcp:` in `_quarto.yml` (or in one page's frontmatter):
+All optional, under `extensions: webmcp:` in `_quarto.yml`, `_metadata.yml` or one page's front matter:
 
 ```yaml
-webmcp:
-  name: "AJ Wiebe"                  # default: website.title
-  description: "What the site is."  # default: website.description
-  owner: "AJ Wiebe, Principal Consultant"
-  site-url: "https://example.com"   # default: website.site-url; used for absolute links in llms.txt
-  about: about.html                 # page about the author, linked from post tools
-  source: "https://github.com/you/site"   # default: website.repo-url
-  links: { github: "https://github.com/you", linkedin: "https://www.linkedin.com/in/you" }
-  posts: posts                      # folder whose pages count as posts (default: posts)
-  theme:                            # add a set_theme tool that clicks your own theme controls
-    light: "[data-theme-btn=light]"
-    dark: "[data-theme-btn=dark]"
-  content:                          # for custom layouts: where content is, how it splits into sections
-    root: ".wrap"                   # default: "#quarto-document-content, main"
-    heading: ".section-label, h2"   # default: "h2"
-    skip: ".masthead, .crumb"       # elements left out of get_current_page and get_page
-  origin-trials:                    # WebMCP origin-trial tokens, added to every page's <head>
-    - "AgKG...="
-  index: true                       # false: site tools only look at the current page
-  enabled: true                     # false on a page: no tools on that page
+extensions:
+  webmcp:
+    name: "AJ Wiebe"                  # default: website.title
+    description: "What the site is."  # default: website.description
+    owner: "AJ Wiebe, Principal Consultant"
+    site-url: "https://example.com"   # default: website.site-url; used for absolute links in llms.txt
+    about: about.html                 # page about the author, linked from post tools
+    source: "https://github.com/you/site"   # default: website.repo-url
+    links: { github: "https://github.com/you", linkedin: "https://www.linkedin.com/in/you" }
+    posts: posts                      # folder whose pages count as posts (default: posts)
+    theme:                            # add a set_theme tool that clicks your own theme controls
+      light: "[data-theme-btn=light]"
+      dark: "[data-theme-btn=dark]"
+    content:                          # for custom layouts: where content is, how it splits into sections
+      root: ".wrap"                   # default: "#quarto-document-content, main"
+      heading: ".section-label, h2"   # default: "h2"
+      skip: ".masthead, .crumb"       # elements left out of get_current_page and get_page
+    origin-trials:                    # WebMCP origin-trial tokens, added to every page's <head>
+      - "AgKG...="
+    index: true                       # false: site tools only look at the current page
+    enabled: true                     # false on a page: no tools on that page
 ```
 
 With a Quarto light/dark theme (`theme: {light: ..., dark: ...}`), `set_theme` uses Quarto's own toggle
 and needs no `theme:` setting.
 
 Draft pages (`draft: true`) get tools when they are rendered but are left out of the index and `llms.txt`.
+
+## Editor support (Quarto Wizard)
+
+The extension ships a [`_schema.yml`](_extensions/webmcp/_schema.yml) and
+[`_snippets.json`](_extensions/webmcp/_snippets.json) for [Quarto Wizard](https://m.canouil.dev/quarto-wizard/)
+in VS Code and Positron. With it installed, everything under `extensions: webmcp:` gets autocompletion,
+hover documentation and diagnostics, including each field of a post's `agent:` block and the allowed
+evidence types and source relations. Snippets:
+
+| Prefix | Inserts |
+|---|---|
+| `agent` | A post's `agent:` block with a claim, a source and a next step |
+| `agent-claim` | One claim with its evidence |
+| `agent-source` | One source |
+| `settings` | Site settings for `_quarto.yml` |
+| `disable` | Front matter that turns the tools off on one page |
+
+Quarto Wizard shows them as `alexanderwiebe-webmcp:<prefix>`.
+
+### Upgrading from 0.2
+
+Before 0.3, settings were under a top-level `webmcp:` key and a post's data under a top-level `agent:` key.
+Both still work, but Quarto Wizard only checks `extensions: webmcp:`. To move, indent `webmcp:`'s
+settings under `extensions: webmcp:` in `_quarto.yml`, and each post's `agent:` block under
+`extensions: webmcp:` in its front matter. When a key is in both places, `extensions: webmcp:` wins.
 
 ## Tools
 
@@ -101,7 +127,8 @@ give up on the tools and go back to browsing.
 
 ## Writing an agent-readable post
 
-Every `agent:` field is optional. Leave out what doesn't apply; the tools return empty lists.
+Put an `agent:` block under `extensions: webmcp:` in the post's front matter. Every field is optional.
+Leave out what doesn't apply; the tools return empty lists.
 
 ```yaml
 ---
@@ -110,32 +137,34 @@ description: "One-line description."
 date: 2026-11-04
 date-modified: 2026-11-04
 
-agent:
-  summary: "The thesis in one sentence."
-  takeaways:
-    - "What a reader should remember."
-  audience:
-    for: ["Platform engineers", "Teams whose CI takes over 20 minutes"]
-    not_for: ["Monorepos built with Bazel"]
-    prerequisites: ["GitHub Actions", "Basic Docker"]
-  author_experience: "What the author has done hands-on that this post draws on."
-  tested_against: { github_actions: "2026-09", docker: "27.x" }
-  outdated: []              # sections the author knows no longer hold
-  disclosures: []           # sponsorships, affiliate links, products sold
-  claims:
-    - id: c1
-      claim: "Layer caching added about 4 minutes per run on cold runners."
-      evidence: { type: measured, detail: "120 runs before and after", link: "#benchmarks" }
-    - id: c2
-      claim: "Most teams don't benefit from layer caching."
-      evidence: { type: opinion, detail: "From 4 codebases; not generalizable." }
-  sources:
-    - { title: "Docker build cache docs", url: "https://docs.docker.com/build/cache/", relation: background }
-  related: []               # slugs of other posts in the posts folder
-  limitations:
-    - "Doesn't apply to self-hosted runners with persistent disks."
-  next_steps:
-    - { action: "Copy the workflow file", link: "ci.yml" }
+extensions:
+  webmcp:
+    agent:
+      summary: "The thesis in one sentence."
+      takeaways:
+        - "What a reader should remember."
+      audience:
+        for: ["Platform engineers", "Teams whose CI takes over 20 minutes"]
+        not_for: ["Monorepos built with Bazel"]
+        prerequisites: ["GitHub Actions", "Basic Docker"]
+      author_experience: "What the author has done hands-on that this post draws on."
+      tested_against: { github_actions: "2026-09", docker: "27.x" }
+      outdated: []              # sections the author knows no longer hold
+      disclosures: []           # sponsorships, affiliate links, products sold
+      claims:
+        - id: c1
+          claim: "Layer caching added about 4 minutes per run on cold runners."
+          evidence: { type: measured, detail: "120 runs before and after", link: "#benchmarks" }
+        - id: c2
+          claim: "Most teams don't benefit from layer caching."
+          evidence: { type: opinion, detail: "From 4 codebases; not generalizable." }
+      sources:
+        - { title: "Docker build cache docs", url: "https://docs.docker.com/build/cache/", relation: background }
+      related: []               # slugs of other posts in the posts folder
+      limitations:
+        - "Doesn't apply to self-hosted runners with persistent disks."
+      next_steps:
+        - { action: "Copy the workflow file", link: "ci.yml" }
 ---
 ```
 
@@ -205,7 +234,7 @@ browsers without WebMCP.
 - **Quarto 2** (`q2`, experimental) is not tested yet. The filter uses only Pandoc Lua APIs that q2
   documents as supported, and no EJS templates.
 - **WebMCP** is an early Chrome and Edge feature. Turn it on locally with the WebMCP flag, or register
-  for the origin trials and list the tokens under `webmcp.origin-trials`.
+  for the origin trials and list the tokens under `extensions: webmcp: origin-trials:`.
 
 ## Developing
 

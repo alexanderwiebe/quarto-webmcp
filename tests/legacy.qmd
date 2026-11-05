@@ -1,0 +1,19 @@
+---
+title: "Settings in the pre-0.3 places"
+format: html
+filters:
+  - webmcp
+# Top-level `webmcp:` and `agent:` still work. `extensions: webmcp:` wins key by key.
+webmcp:
+  name: "Old name"
+  owner: "Legacy owner"
+extensions:
+  webmcp:
+    name: "New name"
+agent:
+  summary: "Top-level agent block."
+  claims:
+    - { id: c1, claim: "Still read.", evidence: { type: opinion } }
+---
+
+## Section

@@ -7,12 +7,16 @@
 --      from every page into webmcp-index.json and llms.txt after the render.
 --   2. Attaches webmcp.js, which registers the tools with document.modelContext when the browser
 --      supports WebMCP and does nothing visible otherwise.
---   3. Adds any origin-trial tokens from `webmcp.origin-trials` to the page <head>.
+--   3. Adds any origin-trial tokens from `origin-trials` to the page <head>.
+--
+-- Settings and a post's `agent:` block are read from `extensions: webmcp:`, where Quarto Wizard
+-- (_schema.yml) validates and completes them. The older top-level `webmcp:` and `agent:` keys
+-- still work; when both are present, `extensions: webmcp:` wins key by key.
 --
 -- Malformed `agent:` data fails the render instead of publishing tools that mislead agents.
 -- Settings and the `agent:` schema are documented in README.md.
 
-local VERSION = "0.2.0"
+local VERSION = "0.3.0"
 
 local EVIDENCE_TYPES = { measured = true, experienced = true, cited = true, opinion = true }
 local SOURCE_RELATIONS = { supports = true, contradicts = true, ["builds-on"] = true, background = true }
@@ -129,19 +133,30 @@ local function site_settings(meta, cfg)
   }
 end
 
+-- Top-level `webmcp:` overlaid with `extensions: webmcp:`.
+local function settings(meta)
+  local cfg = is_map(meta.webmcp) and plain(meta.webmcp) or {}
+  local ext = is_map(meta.extensions) and meta.extensions.webmcp
+  if is_map(ext) then
+    for k, v in pairs(plain(ext)) do cfg[k] = v end
+  end
+  return cfg
+end
+
 function Pandoc(doc)
   if not quarto.doc.is_format("html") then return nil end
 
   local meta = doc.meta
-  local cfg = is_map(meta.webmcp) and plain(meta.webmcp) or {}
+  local cfg = settings(meta)
   if cfg.enabled == false then return nil end
 
   local file = quarto.doc.input_file or ""
   local site = site_settings(meta, cfg)
 
-  local agent = nil
-  if meta.agent ~= nil then
-    agent = plain(meta.agent)
+  local agent = cfg.agent
+  cfg.agent = nil
+  if agent == nil and meta.agent ~= nil then agent = plain(meta.agent) end
+  if agent ~= nil then
     if not is_map(agent) then error(file .. ": `agent` must be a map") end
     validate(agent, file)
   end

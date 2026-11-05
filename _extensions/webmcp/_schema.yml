@@ -1,0 +1,198 @@
+# Schema for the webmcp extension
+# Read by Quarto Wizard for completion, hover docs and diagnostics under `extensions: webmcp:` in
+# _quarto.yml, _metadata.yml and front matter. webmcp.lua does its own render-time checks of `agent`.
+$schema: https://m.canouil.dev/quarto-wizard/assets/schema/v2/extension-schema.json
+
+options:
+  enabled:
+    type: boolean
+    default: true
+    description: "Register WebMCP tools on this page. Set to false in a page's front matter to leave that page out."
+  name:
+    type: string
+    description: "Site name that agents are told. Defaults to website.title."
+  description:
+    type: string
+    description: "What the site is, in one or two sentences. Defaults to website.description."
+  owner:
+    type: string
+    description: "Who runs the site, for example \"AJ Wiebe, Principal Consultant\"."
+  site-url:
+    type: string
+    format: uri
+    description: "Absolute site URL, used for links in llms.txt. Defaults to website.site-url."
+  source:
+    type: string
+    format: uri
+    description: "Source repository URL. Defaults to website.repo-url."
+  about:
+    type: string
+    description: "Rendered path of the page about the author (for example about.html), linked from the post tools."
+    examples: [about.html]
+  links:
+    type: object
+    additionalProperties:
+      type: string
+      format: uri
+    description: "Named profile links returned by about_this_website, for example github and linkedin."
+    examples:
+      - { github: "https://github.com/you", linkedin: "https://www.linkedin.com/in/you" }
+  posts:
+    type: string
+    default: posts
+    description: "Folder whose pages count as posts. The folder's own index page (the listing) does not."
+  theme:
+    type: object
+    additionalProperties: false
+    description: "CSS selectors of the site's own light and dark theme controls. Adds a set_theme tool that clicks them. Not needed with a Quarto light/dark theme."
+    properties:
+      light:
+        type: string
+        description: "Selector of the control that switches to the light theme."
+      dark:
+        type: string
+        description: "Selector of the control that switches to the dark theme."
+  content:
+    type: object
+    additionalProperties: false
+    description: "For custom page layouts: where the content is and how it splits into sections."
+    properties:
+      root:
+        type: string
+        default: "#quarto-document-content, main"
+        description: "Selector of the element that holds the page content."
+      heading:
+        type: string
+        default: h2
+        description: "Selector of the elements that start a section."
+      skip:
+        type: string
+        description: "Selector of elements left out of get_current_page and get_page."
+  index:
+    type: boolean
+    default: true
+    description: "Load webmcp-index.json so site tools see every page. False: site tools look at the current page only."
+  origin-trials:
+    type: array
+    items:
+      type: string
+    description: "WebMCP origin-trial tokens from Chrome or Edge, added to every page's head."
+  agent:
+    type: object
+    additionalProperties: false
+    description: "A post's structured data for agents, set in the post's front matter. Any page with it gets the post tools. Every field is optional."
+    properties:
+      summary:
+        type: string
+        description: "The post's thesis in one sentence."
+      takeaways:
+        type: array
+        items: { type: string }
+        description: "What a reader should remember."
+      audience:
+        type: object
+        additionalProperties: false
+        description: "Who the post is for, used by check_post_fit."
+        properties:
+          for:
+            type: array
+            items: { type: string }
+            description: "Readers the post is written for."
+          not_for:
+            type: array
+            items: { type: string }
+            description: "Readers or situations the post does not apply to."
+          prerequisites:
+            type: array
+            items: { type: string }
+            description: "What the post assumes the reader knows or has."
+      author_experience:
+        type: string
+        description: "What the author has done hands-on that the post draws on."
+      tested_against:
+        type: object
+        additionalProperties: { type: string }
+        description: "Tool or library versions the post was tested against, for example { quarto: \"1.8\" }."
+      outdated:
+        type: array
+        items: { type: string }
+        description: "Parts of the post the author knows no longer hold."
+      disclosures:
+        type: array
+        items: { type: string }
+        description: "Sponsorships, affiliate links or products the author sells. Empty means none declared."
+      claims:
+        type: array
+        description: "The post's claims, each with its evidence. Returned by get_post_claims."
+        items:
+          type: object
+          additionalProperties: false
+          properties:
+            id:
+              type: string
+              required: true
+              description: "Unique id for the claim within the post, for example c1."
+            claim:
+              type: string
+              required: true
+              description: "The claim in one sentence."
+            evidence:
+              type: object
+              required: true
+              additionalProperties: false
+              description: "How the author knows."
+              properties:
+                type:
+                  type: string
+                  required: true
+                  enum: [measured, experienced, cited, opinion]
+                  description: "measured: the author measured it. experienced: from the author's own practice. cited: from a linked source. opinion: the author's judgement."
+                detail:
+                  type: string
+                  description: "The evidence in a sentence, for example how it was measured."
+                link:
+                  type: string
+                  description: "A #heading in the post, a path relative to the post, or a full URL."
+      sources:
+        type: array
+        description: "Work the post relies on or responds to. Returned by get_post_context."
+        items:
+          type: object
+          additionalProperties: false
+          properties:
+            title:
+              type: string
+              description: "Title of the source."
+            url:
+              type: string
+              required: true
+              description: "Link to the source."
+            relation:
+              type: string
+              default: background
+              enum: [supports, contradicts, builds-on, background]
+              description: "How the source relates to the post."
+            note:
+              type: string
+              description: "A short note on the source."
+      related:
+        type: array
+        items: { type: string }
+        description: "Slugs of related posts in the posts folder."
+      limitations:
+        type: array
+        items: { type: string }
+        description: "Where the post's advice stops applying."
+      next_steps:
+        type: array
+        description: "What a reader should do next. Returned by get_post_next_steps."
+        items:
+          type: [object, string]
+          properties:
+            action:
+              type: string
+              required: true
+              description: "The step, as an instruction."
+            link:
+              type: string
+              description: "A #heading in the post, a path relative to the post, or a full URL."
