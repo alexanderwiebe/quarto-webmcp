@@ -25,6 +25,10 @@ quarto add alexanderwiebe/quarto-webmcp
 
 Pin a release with `quarto add alexanderwiebe/quarto-webmcp@v0.2.0`.
 
+To try it on a single document first, copy [`example.qmd`](example.qmd) next to the installed
+`_extensions/` folder and run `quarto render example.qmd`. It has a full `agent:` block and shows how to
+call the tools from the browser console.
+
 Then add the filter and the post-render script to `_quarto.yml`:
 
 ```yaml
@@ -214,6 +218,9 @@ quarto preview
 ```bash
 quarto render && npm install && npm test
 ```
+
+`example.qmd` is not part of the example site. CI renders it on its own, outside the project, and runs
+`tests/example.test.mjs` against it.
 
 ## Releasing
 

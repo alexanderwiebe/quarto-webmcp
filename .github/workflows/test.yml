@@ -33,6 +33,14 @@ jobs:
           rm _site/webmcp-index.json _site/llms.txt
           node _extensions/webmcp/webmcp-index.ts _site
           node tests/check-site.mjs _site
+      - name: Render example.qmd on its own, as a new user would
+        run: |
+          dir="$RUNNER_TEMP/example"
+          mkdir -p "$dir/_extensions/alexanderwiebe"
+          cp -R _extensions/webmcp "$dir/_extensions/alexanderwiebe/"
+          cp example.qmd "$dir/"
+          (cd "$dir" && quarto render example.qmd)
+          node tests/example.test.mjs "$dir/example.html"
       - uses: actions/upload-artifact@v7
         if: matrix.quarto == 'release'
         with:
